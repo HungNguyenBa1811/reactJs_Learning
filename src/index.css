@@ -33,3 +33,11 @@ code {
 .mainApp {
   box-shadow: 0px 0px 5px 5px #eeeeee;
 }
+
+.btn-circle{
+  height: 10vh;
+  width: 10vh;
+  background-color: #50e3a4 !important;
+  border: 0 !important;
+  border-radius: 100% !important;
+}
