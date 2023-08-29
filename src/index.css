@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Commissioner:wght@300;400;600&family=Noto+Sans:wght@300;400;500;900&family=Open+Sans:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Commissioner:wght@300;400;600&family=Noto+Sans:wght@300;400;500;600;700;900&family=Open+Sans:wght@800&display=swap');
 @import url('https://pro.fontawesome.com/releases/v5.11.1/css/all.css');
 body {
   margin: 0;
@@ -23,31 +23,106 @@ code {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .mainApp * {
   background-color: #ffffff;
   text-align: center;
   border: 1px solid #ffffff;
+  z-index: 0;
 }
 
 .mainApp {
   box-shadow: 0px 0px 5px 5px #eeeeee;
 }
 
+.date_render{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+}
+
+.date_render .full_date_container{
+  display: flex;
+  flex-direction: row;
+}
+
+.date_render .full_date_container .month_year{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.date_render .day_container{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.date_render .date{
+  font-weight: 900;
+  font-size: 80px;
+}
+
+.date_render .month{
+  font-weight: 700;
+  font-size: 25px;
+  margin: 0;
+}
+
+.date_render .year{
+  font-weight: 400;
+  font-size: 25px;
+  margin: 0;
+}
+
+.date_render .day{
+  font-weight: 400;
+  font-size: 25px;
+  margin: 0;
+}
+
 .btn-circle{
-  height: 10vh;
-  width: 10vh;
+  height: 93px;
+  width: 93px;
   background-color: #50e3a4 !important;
   border: 0 !important;
   border-radius: 100% !important;
+  z-index: 1;
+}
+
+.task_render{
+  padding-top: 4vh;
 }
 
 .task{
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   flex-direction: row;
+  margin-bottom: 2vh
+}
+
+label{
+  font-size: 1.4em;
+  margin-left: 4vw;
+}
+
+label input[type="text"] {
+  text-align: left;
+}
+
+label input[type="text"]:focus{
+  outline: none;
+}
+
+label input[type="text"]::placeholder{
+  color: #999999;
+}
+
+label input[type="text"]:disabled{
+  color: #000000;
 }
 
 i{
@@ -64,12 +139,12 @@ input[type="checkbox"] {
   /* For iOS < 15 */
   background-color: var(--form-background);
   /* Not removed via appearance */
-  margin-left: 0.75vw;
+  margin-right: 4vw;
   font: inherit;
   color: currentColor;
   width: 2em;
   height: 2em;
-  border: 0.3em solid currentColor;
+  border: 0.2em solid currentColor;
   border-radius: 100%;
   transform: translateY(-0.075em);
 
@@ -90,24 +165,25 @@ input[type="checkbox"]::before {
   background-color: CanvasText;
 }
 
-input[type="checkbox"]:checked::before {
+input[type="checkbox"]:checked::before{
   transform: scale(1);
   background-color: #50e3a4;
+  /* text-decoration: line-through; */
 }
 
 input[type="checkbox"]:checked{
-  border: 0.3em solid #50e3a4;
+  border: 0.2em solid #50e3a4;
   color: #50e3a4;
+  /* text-decoration: line-through; */
 }
-
 /* input[type="checkbox"]:focus {
   outline: max(2px, 0.15em) solid currentColor;
   outline-offset: max(2px, 0.15em);
 } */
 
-input[type="checkbox"]:disabled {
+/* input[type="checkbox"]:disabled {
   --form-control-color: var(--form-control-disabled);
 
   color: var(--form-control-disabled);
   cursor: not-allowed;
-}
+} */
