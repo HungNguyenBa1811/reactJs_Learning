@@ -18,7 +18,7 @@ function App() {
             <TodoList order={3}/>
             <TodoList order={4}/>
             <Button className='btn-circle'>
-              <i className='fa fa-plus'></i>
+              <i className='fa-2x fal fa-plus'></i>
             </Button>
           </div>
         </Col>
