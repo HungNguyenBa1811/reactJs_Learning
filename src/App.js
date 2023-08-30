@@ -6,7 +6,7 @@ import TodoList from './components/TodoList.js';
 import FullTimer from './components/fullTimer.js';
 import DayTimer from './components/dayTimer.js';
 
-import { Container, Row, Col, Button } from 'react-bootstrap'
+import { Container, Row, Col, Button, Nav, Navbar, NavDropdown, Image } from 'react-bootstrap'
 import { useState } from 'react';
 
 const App = () => {
@@ -19,7 +19,7 @@ const App = () => {
   const orderIncrement = () => {
     setOrderList(orderList.concat(<TodoList order={order} function={(event) => setMessage(event.target.value)} keyDown={handleKeyDown}/>))
     setOrder(order+1)
-    console.log(order)
+    console.log(order, message)
   }
 
   const handleKeyDown = (event) => {
@@ -29,7 +29,37 @@ const App = () => {
       }
   }
 
-  return (
+  return (<>
+    <Navbar expand="lg">
+      <Container fluid>
+        <Navbar.Brand href="#">
+          <Image 
+            src='https://react-bootstrap.netlify.app/img/logo.svg'
+            id='logo'
+            height={30}
+          />
+        </Navbar.Brand>
+        <Nav.Link href='#' id='logo-title'>My Reaction To That Information</Nav.Link>
+        <Navbar.Toggle aria-controls="navbarScroll" />
+        <Navbar.Collapse id="navbarScroll">
+          <Nav
+            className="me-auto my-2 my-lg-0"
+            style={{ maxHeight: '100px' }}
+            navbarScroll
+          >
+            <Nav.Link href="#">Home</Nav.Link>
+            <Nav.Link href="#">About</Nav.Link>
+            <NavDropdown title="Other Project" id="navbarScrollingDropdown">
+              <NavDropdown.Item href="#">choose-wife-Longlon</NavDropdown.Item>
+              <NavDropdown.Item href="#">choose-wife-nhk</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="#">Liu's Day</NavDropdown.Item>
+            </NavDropdown>
+            <Nav.Link href="#" disabled>Ngan Nhi Ha Phuong</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
     <Container>
       <Row>
         <Col lg={3} md={2} sm={2} className='blank'></Col>
@@ -40,14 +70,16 @@ const App = () => {
           </div>
           <div className='task_render'>
             {orderList}
-            <Button className='btn-circle' onClick={orderIncrement}>
-              <i className='fa-2x fal fa-plus'></i>
-            </Button>
+            <div className='btn-background'>
+              <Button className='btn-circle' onClick={orderIncrement}>
+                <i className='fa-2x fal fa-plus'></i>
+              </Button>
+            </div>
           </div>
         </Col>
         <Col lg={3} md={2} sm={2} className='blank'></Col>
       </Row>
-    </Container>
+    </Container></>
   );
 }
 

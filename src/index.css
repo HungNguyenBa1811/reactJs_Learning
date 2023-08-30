@@ -18,8 +18,23 @@ code {
   font-family: 'Noto Sans';
 }
 
+/* #logo{
+  height: 100%;
+  max-width: 100%;
+  display: initial;
+} */
+
+#logo-title{
+  margin-right: 5px;
+  font-weight: 600;
+}
+
+.navbar-brand{
+  margin-right: 5px !important;
+}
+
 .row{
-  height: 100vh;
+  height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,13 +49,15 @@ code {
 }
 
 .mainApp {
-  box-shadow: 0px 0px 5px 5px #eeeeee;
+  border: 0px solid transparent !important;
+  /* box-shadow: 0px 0px 5px 5px #eeeeee; */
 }
 
 .date_render{
   display: flex;
   justify-content: space-around;
   flex-direction: row;
+  padding: 30px 0;
 }
 
 .date_render .full_date_container{
@@ -83,6 +100,10 @@ code {
   margin: 0;
 }
 
+.btn-background{
+  padding: 25px 0;
+}
+
 .btn-circle{
   height: 93px;
   width: 93px;
@@ -100,13 +121,15 @@ code {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-direction: row;
-  margin-bottom: 2vh
+  flex-direction: row-reverse;
+  margin-bottom: 3vh
 }
 
 label{
   font-size: 1.4em;
   margin-left: 4vw;
+  display: flex !important;
+  flex-direction: row;
 }
 
 label input[type="text"] {
@@ -123,6 +146,16 @@ label input[type="text"]::placeholder{
 
 label input[type="text"]:disabled{
   color: #000000;
+}
+
+label .icon-manager{
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.icon-manager .eliminate{
+  display: none;
 }
 
 i{
@@ -176,6 +209,12 @@ input[type="checkbox"]:checked{
   color: #50e3a4;
   /* text-decoration: line-through; */
 }
+
+input[type="checkbox"]:checked ~ label > input[type="text"]:disabled{
+  text-decoration: line-through;
+  color: #d1d2da;
+}
+
 /* input[type="checkbox"]:focus {
   outline: max(2px, 0.15em) solid currentColor;
   outline-offset: max(2px, 0.15em);

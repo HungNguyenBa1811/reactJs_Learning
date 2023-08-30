@@ -1,9 +1,19 @@
 const TodoList = (props) => {
     return (
         <div className={"task task_" + props.order}>
+            <input 
+                name={"check_" + props.order}
+                type="checkbox"
+                className={"checkbox_" + props.order}
+            />
+
             <label htmlFor={"check_" + props.order}>
-                <i className="fas fa-edit"></i>
-                &nbsp;
+                <div className="icon-manager">
+                    &nbsp;
+                    <i className="fas fa-edit"></i>
+                    &nbsp;
+                    <i className="fad fa-trash eliminate"></i>
+                </div>
                 <input
                     className="input"
                     type="text"
@@ -12,11 +22,6 @@ const TodoList = (props) => {
                     onKeyDown={props.keyDown}
                 />
             </label>
-            <input 
-                name={"check_" + props.order}
-                type="checkbox"
-                className={"checkbox_" + props.order}
-            />
         </div>
     );
 }
