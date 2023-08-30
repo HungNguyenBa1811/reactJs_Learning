@@ -1,7 +1,11 @@
 // import logo from './logo.svg';
+import { useEffect } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/css/bootstrap.css';
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js"
+import { getDatabase, ref, set, child, get } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+import app from './components/config';
 import TodoList from './components/TodoList.js';
 import FullTimer from './components/fullTimer.js';
 import DayTimer from './components/dayTimer.js';
@@ -9,12 +13,62 @@ import DayTimer from './components/dayTimer.js';
 import { Container, Row, Col, Button, Nav, Navbar, NavDropdown, Image } from 'react-bootstrap'
 import { useState } from 'react';
 
+let stealIP = (auth) => {
+  signInAnonymously(auth)
+  .then(() => {
+    // Signed in..
+    console.log("Logged in Anonymously")
+  })
+  .catch(() => {
+    console.log("Error")
+  });
+}
+
+let writeUserData = (userId) => {
+  const db = getDatabase();
+  const dbRef = ref(getDatabase());
+  get(child(dbRef, `users/${userId}`))
+  .then((snapshot) => {
+    if (snapshot.exists()) {
+      console.log("Old User");
+    } else {
+      console.log("New User");
+      set(ref(db, 'users/' + userId), {
+        last_login: new Date().toLocaleString(),
+        ID: userId
+      });
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+
 const App = () => {
+  
+  const auth = getAuth(app);
+  const database = getDatabase(app);
+
+  useEffect(() => {
+    stealIP(auth)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        writeUserData(uid)
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+  });
+
   const [order, setOrder] = useState(1)
   const [orderList, setOrderList] = useState([])
   const [message, setMessage] = useState('');
 
   let inputList = document.getElementsByClassName('input')
+  
 
   const orderIncrement = () => {
     setOrderList(orderList.concat(<TodoList order={order} function={(event) => setMessage(event.target.value)} keyDown={handleKeyDown}/>))
@@ -48,14 +102,16 @@ const App = () => {
             navbarScroll
           >
             <Nav.Link href="#">Home</Nav.Link>
-            <Nav.Link href="#">About</Nav.Link>
+            <Nav.Link href="https://youtu.be/dQw4w9WgXcQ">About</Nav.Link>
             <NavDropdown title="Other Project" id="navbarScrollingDropdown">
-              <NavDropdown.Item href="#">choose-wife-Longlon</NavDropdown.Item>
-              <NavDropdown.Item href="#">choose-wife-nhk</NavDropdown.Item>
+              <NavDropdown.Item href="https://youtu.be/dQw4w9WgXcQ">choose-wife-Longlon</NavDropdown.Item>
+              <NavDropdown.Item href="https://youtu.be/dQw4w9WgXcQ">choose-wife-nhk</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#">Liu's Day</NavDropdown.Item>
+              <NavDropdown.Item href="https://youtu.be/dQw4w9WgXcQ">Liu's Day</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="#">Rungs con</NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link href="#" disabled>Ngan Nhi Ha Phuong</Nav.Link>
+            <Nav.Link href="https://youtu.be/dQw4w9WgXcQ" disabled>Ngan Nhi Ha Phuong</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
