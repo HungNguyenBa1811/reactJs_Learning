@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/css/bootstrap.css';
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js"
-import { getDatabase, ref, set, child, get } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth"
+import { getDatabase, ref, set, child, get } from "firebase/database";
 import app from './components/config';
 import TodoList from './components/TodoList.js';
 import FullTimer from './components/fullTimer.js';
@@ -34,7 +34,7 @@ let writeUserData = (userId) => {
     } else {
       console.log("New User");
       set(ref(db, 'users/' + userId), {
-        last_login: new Date().toLocaleString(),
+        first_login: new Date().toLocaleString(),
         ID: userId
       });
     }
@@ -48,7 +48,6 @@ let writeUserData = (userId) => {
 const App = () => {
   
   const auth = getAuth(app);
-  const database = getDatabase(app);
 
   useEffect(() => {
     stealIP(auth)
