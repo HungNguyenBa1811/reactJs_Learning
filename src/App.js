@@ -25,8 +25,8 @@ let stealIP = (auth) => {
 }
 
 let writeUserData = (userId) => {
-  const db = getDatabase();
-  const dbRef = ref(getDatabase());
+  const db = getDatabase(app);
+  const dbRef = ref(getDatabase(app));
   get(child(dbRef, `users/${userId}`))
   .then((snapshot) => {
     if (snapshot.exists()) {
