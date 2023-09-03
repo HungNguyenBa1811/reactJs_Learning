@@ -134,6 +134,9 @@ label{
 
 label input[type="text"] {
   text-align: left;
+  flex: 0 0 auto;
+  width: 105%;
+  resize: none;
 }
 
 label input[type="text"]:focus{

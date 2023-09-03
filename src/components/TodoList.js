@@ -5,6 +5,7 @@ const TodoList = (props) => {
                 name={"check_" + props.order}
                 type="checkbox"
                 className={"checkbox_" + props.order}
+                checked={props.isChecked}
             />
 
             <label htmlFor={"check_" + props.order}>
@@ -12,14 +13,17 @@ const TodoList = (props) => {
                     &nbsp;
                     <i className="fas fa-edit"></i>
                     &nbsp;
-                    <i className="fad fa-trash eliminate"></i>
+                    <i className="fad fa-trash invisible" onClick={props.removeFunction} id={props.order}></i>
                 </div>
                 <input
                     className="input"
                     type="text"
                     placeholder={"Task " + props.order}
-                    onChange={props.function}
+                    // onChange={props.function}
                     onKeyDown={props.keyDown}
+                    id={props.order}
+                    defaultValue={props.text_value}
+                    disabled={props.isDisabled}
                 />
             </label>
         </div>
