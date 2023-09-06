@@ -5,7 +5,7 @@ const TodoList = (props) => {
                 name={"check_" + props.order}
                 type="checkbox"
                 className={"checkbox_" + props.order}
-                checked={props.isChecked}
+                defaultChecked={props.isChecked}
             />
 
             <label htmlFor={"check_" + props.order}>
@@ -13,7 +13,7 @@ const TodoList = (props) => {
                     &nbsp;
                     <i className="fas fa-edit"></i>
                     &nbsp;
-                    <i className="fad fa-trash invisible" onClick={props.removeFunction} id={props.order}></i>
+                    <i className="fad fa-trash" onClick={props.removeFunction} id={props.order}></i>
                 </div>
                 <input
                     className="input"

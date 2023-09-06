@@ -15,18 +15,23 @@ import { useEffect, useState } from 'react';
 const App = () => {
 
   const auth = getAuth(app);
+  const db = getDatabase(app);
+  const dbRef = ref(getDatabase(app));
+
+  const [currentUserID, setCurrentUserID] = useState('')
   const [order, setOrder] = useState(1)
-  const [orderList, setOrderList] = useState([])
-  const [taskInputList, setTaskInputList] = useState({})
-  // const [message, setMessage] = useState('');
-  let inputList = document.getElementsByClassName('input')
-  // let taskRemoveList = document.getElementsByClassName('task_remove')
+  const [orderDOMList, setOrderDOMList] = useState([])
+  const [orderData, setOrderData] = useState([])
+  const [authCheck, setAuthCheck] = useState(()=> {
+    return false
+  })
 
-  const getKeyByValue = (object, value) => {
-    return Object.keys(object).find(key => object[key] === value);
-  }
+  // let inputList = document.getElementsByClassName('input')
+  // const getKeyByValue = (object, value) => {
+  //   return Object.keys(object).find(key => object[key] === value);
+  // }
 
-  const stealIP = (authApp) => {
+  const automaticallySignIn = (authApp) => {
     signInAnonymously(authApp)
     .then(() => {
       // Signed in..
@@ -38,31 +43,29 @@ const App = () => {
   }
   
   const writeUserData = (userId) => {
-    const db = getDatabase(app);
-    const dbRef = ref(getDatabase(app));
+    setCurrentUserID(userId);
     get(child(dbRef, `users/${userId}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
-        console.log("Old User");
-        // taskInputList
-        localStorage.setItem("ID", snapshot.val().ID)
-        let dataFetch = snapshot.val()
-        if(dataFetch.task && order === 1){
-          // console.log(dataFetch.task)
-          // console.log(typeof dataFetch.task)
-          // // reRender(dataFetch.task)
-          setTaskInputList(Object.assign(taskInputList, dataFetch.task))
-          setOrder(Number(getKeyByValue(taskInputList, Object.values(taskInputList).reduce((a, b) => taskInputList[a] > taskInputList[b] ? a : b)))+1)
-          reRender(dataFetch.task)
-          // updatePosts(taskInputList,userId)
-          
+        console.log("Data Available");
+        
+        let dataFetch = snapshot.val() // Collect data from firebase
+        if(dataFetch.task && order === 1){ // Have data but not up-to-date
+
+          let parseData = JSON.parse(dataFetch.task)
+          console.log("have data but no checkpoint", parseData)
+          setOrderData(prev => prev.concat(parseData))
+          setOrder(dataFetch.currentState)
+          reRender(parseData)
+
         }
       } else {
-        console.log("New User");
+        console.log("Newbie");
         set(ref(db, 'users/' + userId), {
           first_login: new Date().toLocaleString(),
           ID: userId,
-          task: {}
+          currentState: 1,
+          task: []
         });
       }
     })
@@ -71,42 +74,40 @@ const App = () => {
     });
   }
 
-  function updatePosts(data,uid) {
-    const db = getDatabase(app);
+  const reRender = (arrayObj) => {
+    let forceUpdateArray=[]
+    for(let obj of arrayObj){
+      // console.log(obj,forceUpdateArray)
+      forceUpdateArray.push(<TodoList order={obj.id} isChecked={obj.checked} isDisabled={true} key={"Order number " + obj.id} text_value={obj.text} removeFunction={orderDecrement} keyDown={handleKeyDown}/>)
+    }
+    setOrderDOMList(forceUpdateArray)
+  }
 
-    // A post entry.
-    // const postData = data
+  function updateTasks(data) {
 
-    // Write the new post's data simultaneously in the posts list and the user's post list.
     const updates = {};
-    updates['/posts/' + uid + '/'] = data;
-    updates['/users/' + uid + '/task/' ] = data;
+    let stringData = JSON.stringify(data)
+    console.log("data phase",data)
+    updates['/posts-cache/' + currentUserID + '/'] = stringData;
+    updates['/users/' + currentUserID + '/task/' ] = stringData;
+    updates['/users/' + currentUserID + '/currentState/' ] = order+1;
     
     return update(ref(db), updates);
   }
 
-  const reRender = (object) => {
-    let arrayUpdate = []
-    for(let i of Object.keys(object)){
-      arrayUpdate = arrayUpdate.concat(<TodoList order={Number(i)} key={"Order number " + i} text_value={object[i]} removeFunction={orderDecrement} keyDown={handleKeyDown}/>)
-      // console.log(arrayUpdate)
-    }
-    localStorage.setItem("List of Task", JSON.stringify(arrayUpdate))
-    setOrderList(orderList.concat(arrayUpdate))
-    // console.log(orderList,object)
-  }
 
   const orderIncrement = () => {
+    setOrderDOMList([...orderDOMList, <TodoList order={order} isChecked={false} isDisabled={false} key={"Order number " + order} text_value={''} removeFunction={orderDecrement} keyDown={handleKeyDown}/>])
     setOrder(order+1)
-    setOrderList(orderList.concat(<TodoList order={order} isChecked={false} isDisabled={false} key={"Order number " + order} text_value={''} removeFunction={orderDecrement} keyDown={handleKeyDown}/>))
-    // console.log(orderList)
   }
 
   const orderDecrement = (event) => {
     // orderList.splice(Number(event.target.id)-1,1)
-    let me = orderList
+    let currentTask = JSON.parse(localStorage.getItem("List of Task"))
+    // currentTask.splice(Number(event.target.id)-1, 1)
     // me.splice(Number(event.target.id)-1,1)
-    console.log(event.target, event.target.id, me)
+    // const found = currentTask.find((task)=>task)
+    console.log(event.target, event.target.id, currentTask)
     // delete taskInputList[event.target.id]
     // let uid = localStorage.getItem("ID")
     // updatePosts(taskInputList,uid)
@@ -114,14 +115,20 @@ const App = () => {
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      let uid = localStorage.getItem("ID")
-      inputList[Number(event.target.id)-1].disabled = true
       console.log('Sucess ✅');
-      taskInputList[event.target.id] = event.target.value
-      // Object.assign(taskInputList)
-      updatePosts(taskInputList,uid)
-      event.target.parentElement.children[0].children[1].classList.remove("invisible")
+      let newData = {
+        id: event.target.id,
+        text: event.target.value,
+        checked: false,
+        textDisabled: true,
+        timeCreated: new Date().toLocaleString(),
+      }
+      let concatData = [...orderData, newData]
+      setOrderData(concatData)
+      updateTasks(concatData)
+      // console.log(orderData)
 
+      event.target.parentElement.children[0].children[1].classList.remove("invisible")
       // if(checkOverflow(event.target)){
       //   event.target.rows = 2
       // }
@@ -142,30 +149,35 @@ const App = () => {
   //   return isOverflowing;
   // }
 
-
-  useEffect(() => {
+  const authState = () => {
     onAuthStateChanged(auth, (user) => {
+      setAuthCheck(true)
       if (user) {
         // User state: signed in (old user)
         const uid = user.uid;
-        // console.log(user)
         writeUserData(uid)
-        // console.log(!taskInputList[1])
-        if(taskInputList[1]){
-          updatePosts(taskInputList,uid)
-        }
+        console.log(orderDOMList)
+        console.log(orderData)
       } else {
-        stealIP(auth)
+        automaticallySignIn(auth)
         // User state: not signed in/ new user
         // ...
       }
     });
-  });
+  }
+
+  useEffect(() => {
+    if(!authCheck){
+      authState()
+    } else {
+      writeUserData(currentUserID)
+    }
+  },[]);
   // console.log(taskInputList)
 
   return (<>
     <Navbar expand="lg">
-      <Container fluid onClick={()=>console.log(orderList)}>
+      <Container fluid>
         <Navbar.Brand href="#">
           <Image 
             src='https://react-bootstrap.netlify.app/img/logo.svg'
@@ -205,7 +217,7 @@ const App = () => {
             <DayTimer></DayTimer>
           </div>
           <div className='task_render'>
-            {orderList}
+            {orderDOMList}
             <div className='btn-background'>
               <Button className='btn-circle' onClick={orderIncrement}>
                 <i className='fa-2x fal fa-plus'></i>
